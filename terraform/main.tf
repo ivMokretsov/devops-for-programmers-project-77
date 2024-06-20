@@ -172,11 +172,22 @@ resource "yandex_alb_virtual_host" "virtual-host" {
   depends_on = [yandex_alb_backend_group.backend-group, yandex_alb_http_router.router]
 }
 
+data "ansiblevault_path" "certificate" {
+  path = var.ansible_vault_path
+  key = "certificate"
+}
+
+data "ansiblevault_path" "private_key" {
+  path = var.ansible_vault_path
+  key = "private_key"
+}
+
+
 resource "yandex_cm_certificate" "imported-cert" {
   name = "imported-cert"
   self_managed {
-    certificate = file("certificate.crt")
-    private_key = file("cert_key")
+    certificate  = data.ansiblevault_path.certificate.value
+    private_key  = data.ansiblevault_path.private_key.value
   }
 }
 
