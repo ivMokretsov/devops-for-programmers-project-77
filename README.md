@@ -4,7 +4,7 @@
 
 ## Подготовительный этап
 - Для начала работы необходимо иметь авторизованный ключ
-он должен находится в директории проекта в файле key.json
+он должен находится в директории проекта в файле `key.json`.
 [подробнее в документации](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#console_2)
 
 - Все чувствительные данные хранятся в директории `/ansible/group_vars/all/vault.yml` в зашифрованном виде.
