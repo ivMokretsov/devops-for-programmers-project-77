@@ -16,23 +16,23 @@ terraform {
 }
 
 provider "ansiblevault" {
-  vault_path = "../.vault_pass"
-  root_folder         = "../ansible"
+  vault_path  = "../.vault_pass"
+  root_folder = "../ansible"
 }
 
 data "ansiblevault_path" "cloud_id" {
   path = var.ansible_vault_path
-  key = "cloud_id"
+  key  = "cloud_id"
 }
 
 data "ansiblevault_path" "folder_id" {
   path = var.ansible_vault_path
-  key = "folder_id"
+  key  = "folder_id"
 }
 
 data "ansiblevault_path" "token" {
   path = var.token_ansible_vault_path
-  key = "token"
+  key  = "token"
 }
 
 provider "yandex" {

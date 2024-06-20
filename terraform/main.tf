@@ -7,11 +7,11 @@ resource "yandex_vpc_subnet" "subnet-tf" {
   zone           = var.zone
   network_id     = yandex_vpc_network.network-tf.id
   v4_cidr_blocks = ["192.168.10.0/24"]
-  depends_on = [yandex_vpc_network.network-tf]
+  depends_on     = [yandex_vpc_network.network-tf]
 }
 
 resource "yandex_compute_disk" "boot-disk" {
-  count = 2
+  count    = 2
   name     = "boot-disk-${count.index + 1}"
   type     = "network-hdd"
   zone     = var.zone
@@ -21,7 +21,7 @@ resource "yandex_compute_disk" "boot-disk" {
 
 resource "yandex_compute_instance" "vm" {
   count = 2
-  name = "terraform${count.index + 1}"
+  name  = "terraform${count.index + 1}"
   resources {
     cores  = 2
     memory = 2
@@ -30,8 +30,8 @@ resource "yandex_compute_instance" "vm" {
     disk_id = yandex_compute_disk.boot-disk[count.index].id
   }
   network_interface {
-    subnet_id = yandex_vpc_subnet.subnet-tf.id
-    nat       = true
+    subnet_id          = yandex_vpc_subnet.subnet-tf.id
+    nat                = true
     security_group_ids = [yandex_vpc_security_group.sg-vms.id]
   }
   metadata = {
@@ -41,14 +41,14 @@ resource "yandex_compute_instance" "vm" {
 }
 
 resource "yandex_vpc_security_group" "sg-balancer" {
-  name        = "sg-balancer"
-  network_id  = yandex_vpc_network.network-tf.id
+  name       = "sg-balancer"
+  network_id = yandex_vpc_network.network-tf.id
   egress {
     protocol       = "ANY"
     description    = "any"
     v4_cidr_blocks = ["0.0.0.0/0"]
-    from_port = 0
-    to_port = 65535
+    from_port      = 0
+    to_port        = 65535
   }
   ingress {
     protocol       = "TCP"
@@ -71,13 +71,13 @@ resource "yandex_vpc_security_group" "sg-balancer" {
 }
 
 resource "yandex_vpc_security_group" "sg-vms" {
-  name        = "sg-vms"
-  network_id  = yandex_vpc_network.network-tf.id
+  name       = "sg-vms"
+  network_id = yandex_vpc_network.network-tf.id
   ingress {
-    protocol          = "TCP"
-    description       = "balancer1"
-    port              = 80
-    v4_cidr_blocks    = ["0.0.0.0/0"]
+    protocol       = "TCP"
+    description    = "balancer1"
+    port           = 80
+    v4_cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     protocol       = "TCP"
@@ -95,8 +95,8 @@ resource "yandex_vpc_security_group" "sg-vms" {
     protocol       = "ANY"
     description    = "any"
     v4_cidr_blocks = ["0.0.0.0/0"]
-    from_port = 0
-    to_port = 65535
+    from_port      = 0
+    to_port        = 65535
   }
 }
 
@@ -134,7 +134,7 @@ resource "yandex_alb_backend_group" "backend-group" {
     target_group_ids = [yandex_alb_target_group.target-group.id]
     load_balancing_config {
       panic_threshold = 90
-      mode = "MAGLEV_HASH"
+      mode            = "MAGLEV_HASH"
     }
     healthcheck {
       timeout             = "10s"
@@ -174,20 +174,20 @@ resource "yandex_alb_virtual_host" "virtual-host" {
 
 data "ansiblevault_path" "certificate" {
   path = var.ansible_vault_path
-  key = "certificate"
+  key  = "certificate"
 }
 
 data "ansiblevault_path" "private_key" {
   path = var.ansible_vault_path
-  key = "private_key"
+  key  = "private_key"
 }
 
 
 resource "yandex_cm_certificate" "imported-cert" {
   name = "imported-cert"
   self_managed {
-    certificate  = data.ansiblevault_path.certificate.value
-    private_key  = data.ansiblevault_path.private_key.value
+    certificate = data.ansiblevault_path.certificate.value
+    private_key = data.ansiblevault_path.private_key.value
   }
 }
 
@@ -205,7 +205,7 @@ resource "yandex_alb_load_balancer" "l7-balancer" {
     endpoint {
       address {
         external_ipv4_address {
-            address = yandex_vpc_address.stat_address.external_ipv4_address[0].address
+          address = yandex_vpc_address.stat_address.external_ipv4_address[0].address
         }
       }
       ports = [443]
@@ -227,7 +227,7 @@ resource "yandex_alb_load_balancer" "l7-balancer" {
           address = yandex_vpc_address.stat_address.external_ipv4_address[0].address
         }
       }
-    ports = [80]
+      ports = [80]
     }
     http {
       redirects {
@@ -257,36 +257,36 @@ resource "yandex_dns_zone" "mokretsov_ru_zone" {
 }
 
 resource "yandex_dns_recordset" "mokretsov_ru_a_record" {
-  zone_id = yandex_dns_zone.mokretsov_ru_zone.id
-  name    = "@"
-  type    = "A"
-  ttl     = 60
-  data    = [yandex_vpc_address.stat_address.external_ipv4_address[0].address]
+  zone_id    = yandex_dns_zone.mokretsov_ru_zone.id
+  name       = "@"
+  type       = "A"
+  ttl        = 60
+  data       = [yandex_vpc_address.stat_address.external_ipv4_address[0].address]
   depends_on = [yandex_dns_zone.mokretsov_ru_zone, yandex_alb_load_balancer.l7-balancer]
 }
 
 resource "yandex_dns_recordset" "mokretsov_ru_www_a_record" {
-  zone_id = yandex_dns_zone.mokretsov_ru_zone.id
-  name    = "www"
-  type    = "A"
-  ttl     = 60
-  data    = [yandex_vpc_address.stat_address.external_ipv4_address[0].address]
+  zone_id    = yandex_dns_zone.mokretsov_ru_zone.id
+  name       = "www"
+  type       = "A"
+  ttl        = 60
+  data       = [yandex_vpc_address.stat_address.external_ipv4_address[0].address]
   depends_on = [yandex_dns_zone.mokretsov_ru_zone, yandex_alb_load_balancer.l7-balancer]
 }
 
 data "ansiblevault_path" "db_user" {
   path = var.ansible_vault_path
-  key = "db_user"
+  key  = "db_user"
 }
 
 data "ansiblevault_path" "db_password" {
   path = var.ansible_vault_path
-  key = "db_password"
+  key  = "db_password"
 }
 
 data "ansiblevault_path" "db_name" {
   path = var.ansible_vault_path
-  key = "db_name"
+  key  = "db_name"
 }
 
 resource "yandex_mdb_postgresql_cluster" "dbcluster" {
@@ -301,7 +301,7 @@ resource "yandex_mdb_postgresql_cluster" "dbcluster" {
       disk_size          = 15
     }
     postgresql_config = {
-      max_connections    = 100
+      max_connections = 100
     }
   }
   maintenance_window {
@@ -338,7 +338,7 @@ output "db_host" {
 resource "local_file" "ansible_vars" {
   content = templatefile("templates/terraform-outputs.tftpl",
     {
-      db_host         = yandex_mdb_postgresql_cluster.dbcluster.host[0].fqdn
+      db_host = yandex_mdb_postgresql_cluster.dbcluster.host[0].fqdn
   })
   filename   = "../ansible/group_vars/all/terraform-outputs.yml"
   depends_on = [yandex_mdb_postgresql_cluster.dbcluster]
