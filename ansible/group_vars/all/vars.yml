@@ -1,0 +1,12 @@
+# Переменные для роли geerlingguy.pip
+pip_package: python3-pip
+pip_executable: pip3
+pip_install_packages:
+  - name: docker
+  - name: requests
+
+# Переменные для роли deploy_redmine
+db_port: 6432
+
+# Переменные для роли datadog.dd.agent
+datadog_site: "datadoghq.com"

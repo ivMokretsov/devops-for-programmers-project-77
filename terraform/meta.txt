@@ -1,0 +1,9 @@
+
+#cloud-config
+users:
+  - name: yc-user
+    groups: sudo
+    shell: /bin/bash
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDNEMQIDrwrlVHVcOmlwTWQQHCc5Oda1W/cp0g2OcZsQDsfhrYnKCeJSAPsA9RaiNW0F1+/CUBI/rxAl2lJMnkbNM3pBbkraZXWy2XoLLrhI3CVSTDQ44gAMBqdSmYPhynm/BcAYbpe8kVEKxYcXydajBMNz+BPquJkYC0Tb/89C5soddHxe3LB5zsLqhP1TSG5ESdbAyMF12B7fWwHbxYjVmt0Yk1EISkfuTaLYh9jZu94MPS0SRbRYFd1oXq8SRCvGjT0U6QZnbBmBL9r1hsSn/n17iV/ealh7DIXLOERpKFVGwN0SZFuzlBN7PzhmPDa0id0gHr8u5Ibuhk8tI6Cqny/4GU2Vpl5O7v6J5s50gqL0ggsc96hhLkYrmU8Tm1ccC9A4A6edBfXaNXrmsBJHkVw8aW4kdDEyih2fwkPHUzm4ECcS/+9QTKwrCMt0mVuYpl1ENmWp2Dyk+q0AQAUJ5njFI0y25XQM72X8OBHoDIoOG/JfQ4yP9E1QMoky1NhO/llehfhpdVAjBn/bVGZNaZOh8GNQoIaKTfyHPINOY0GgBe8FoxRC7V0po4DF9JQPZ4sWzqysT/uh2WC06+FLbaT3c39rXM6uOo87PtT21P/k1ceueywVNYchu8qMpzS2uFnHyG/2xyNQH5rQEFRi1wmg2kofISTLDr1gUJIyQ== ivan.mokretsov@icloud.com

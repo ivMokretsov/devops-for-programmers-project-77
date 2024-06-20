@@ -1,0 +1,15 @@
+galaxy_info:
+  author: imokretsov
+  description: your role description
+  company: imokretsov
+  license: MIT
+  min_ansible_version: 2.1
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+        - focal
+  galaxy_tags: []  # Убедитесь, что этот список тоже правильно отформатирован
+
+dependencies: []  # Список зависимостей, если они есть, также должен быть правильно отформатирован

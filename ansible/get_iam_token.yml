@@ -1,0 +1,53 @@
+- hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Decrypt Yandex Cloud key file
+      shell: ansible-vault decrypt ../key.json --output=- --vault-password-file ../.vault_pass
+      register: yandex_key
+      no_log: true
+
+    - name: Write decrypted key to temp file
+      copy:
+        content: "{{ yandex_key.stdout }}"
+        dest: "/tmp/decrypted_key.json"
+      no_log: true
+      changed_when: false
+
+    - name: Set permission for the temp file
+      file:
+        path: "/tmp/decrypted_key.json"
+        mode: '0600'
+
+    - name: Create Yandex Cloud IAM token
+      shell: |
+        yc config set service-account-key /tmp/decrypted_key.json
+        yc iam create-token
+      register: yc_token
+      no_log: true
+
+    - name: Format IAM token into key value format and save to temp file
+      copy:
+        content: "token: {{ yc_token.stdout }}"
+        dest: "/tmp/iam_token.yml"
+      no_log: true
+
+    - name: Encrypt IAM token file
+      shell: ansible-vault encrypt /tmp/iam_token.yml --vault-password-file ../.vault_pass
+      no_log: true
+
+    - name: Move encrypted token file to the final location
+      command: mv /tmp/iam_token.yml group_vars/all/iam_token_vault.yml
+      no_log: true
+
+    - name: Cleanup temp files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/decrypted_key.json"
+        - "/tmp/iam_token.yml"
+      no_log: true
+
+    - name: Unset service-account-key
+      shell: yc config unset service-account-key
+      no_log: true

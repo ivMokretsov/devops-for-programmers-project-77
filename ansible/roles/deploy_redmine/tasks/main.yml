@@ -1,0 +1,21 @@
+---
+- name: Create .env file for Redmine
+  ansible.builtin.template:
+    src: .env.j2
+    dest: /tmp/.env
+    mode: '0600'
+
+- name: Run Redmine container
+  community.docker.docker_container:
+    name: redmine
+    image: redmine
+    state: started
+    restart_policy: always
+    published_ports:
+      - "3000:3000"
+    env_file: /tmp/.env
+
+- name: Remove temporary .env file
+  ansible.builtin.file:
+    path: /tmp/.env
+    state: absent

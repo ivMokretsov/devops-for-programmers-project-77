@@ -1,0 +1,6 @@
+.vault_pass
+secret.*
+*.tfstate
+*.tfstate.*
+*.crt
+cert_key
