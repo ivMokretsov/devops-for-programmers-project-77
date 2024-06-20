@@ -2,13 +2,13 @@ terraform {
   required_providers {
     yandex = {
       source = "yandex-cloud/yandex"
+      version = "0.97.0"
     }
     ansiblevault = {
       source  = "MeilleursAgents/ansiblevault"
       version = "~> 2.3.0"
     }
   }
-  required_version = ">= 0.13"
 }
 
 provider "ansiblevault" {
