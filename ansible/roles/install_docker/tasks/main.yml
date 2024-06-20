@@ -33,7 +33,7 @@
     name: docker-ce
     state: present
     update_cache: yes
-  notify: 
+  notify:
     - ensure docker is enabled and running
 
 - name: Add user to the Docker group
